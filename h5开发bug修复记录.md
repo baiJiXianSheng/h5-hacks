@@ -166,6 +166,29 @@ input {
 
 ***
 
+# <font color=green>[Usage]：</font> 安卓或谷歌浏览器 输入框右侧蓝色x按钮
+```css
+input::-webkit-search-cancel-button {
+    display: none;
+}
+```
+
+***
+
+# <font color=green>[Usage]：</font> 安卓荣耀10输入框输入文本跳转搜索页面，再次返回该页面时输入框自动聚焦
+```js
+// ...
+
+searchInput.value = "";
+if (document.activeElement instanceof HTMLElement) {
+    document.activeElement.blur();
+}
+
+beforeRequest();
+```
+
+***
+
 # BFC
 - `float` 的值不是 `none`
 - `position` 的值不是 `static`或者`relative`
