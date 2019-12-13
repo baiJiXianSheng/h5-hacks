@@ -36,7 +36,7 @@ var VConsole = new VConsole();
     /* 需要知道容器（垂直滚动时）高度 或 （水平滚动时）宽度 */
     height: 800px;
     /* 必要 */
-    overflow: hidden;
+    overflow: hidden; /* 如垂直滑动，当与 IOS 滑动冲突时，可改为 overflow-y: scroll */
 
     /* 可选，用于处理 IScroll 滚动区域不准确问题 */
     position: relative;
@@ -50,14 +50,32 @@ var IScrollInstance = new IScroll("#scroll-wrapper", {
 
 });
 
+// 每次更新滑动列表内容后，记得手动刷新插件
+IScrollInstance && IScrollInstance.refresh();
+
 // iscroll-probe.js 才可监听到
 IScrollInstance.on("scroll", funciton () {
 
 });
 
-IScrollInstance.on("scrollEnd", funciton () {
+IScrollInstance.on("scrollEnd", _scrollEnd);
 
-});
+function _scrollEnd(e) {
+    /*
+        【this.maxScrollY】 页面最大滚动距离，若垂直滑动时为负数，其性质等同于 scrollHeight
+        【this.y】 已滚动距离
+        【this.pointY】 当前手指位置
+    */
+
+    // 手指滑出滚动区域后，使滑动内容回弹
+    // if (this.pointY < 0)
+    //     _IScrollInstance.scrollTo(0, this.maxScrollY, 100);
+
+    // 加载更多！    maxScrollY 和 y 都为负数
+    if (this.y < 0 && _IScrollInstance.maxScrollY >= _IScrollInstance.y) { 
+        
+    }
+}
 
 
 ```
@@ -189,6 +207,32 @@ beforeRequest();
 
 ***
 
+# <font color=green>[Usage]：</font> iPhone 设备 `media 查询` 样式适配
+```css
+
+/* iphoneX、iphoneXs */
+@media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
+    div {
+
+    }
+}
+/* iphone Xs Max */
+@media only screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio:3) {
+    div {
+
+    }
+}
+/* iphone XR */
+@media only screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio:2) {
+    div {
+        
+    }
+}
+
+```
+
+***
+
 # BFC
 - `float` 的值不是 `none`
 - `position` 的值不是 `static`或者`relative`
@@ -266,3 +310,20 @@ document.getElementById("loadInput").click();
 ```
 
 ***
+
+# <font color=red>[Bug]：</font> 有 `input` 聚焦时，底部footer `position: fixed` 失效被键盘顶起。尝试解决方案：聚焦时 隐藏footer，失去焦点时 显示footer
+
+```js
+
+// 浏览器当前的高度
+var oHeight = $(document).height();
+$(window).resize(function () {
+    var now = $(document).height();
+    if (now < oHeight) {
+        $(".footer").hide();
+    } else {
+        $(".footer").show();
+    }
+});
+
+```
