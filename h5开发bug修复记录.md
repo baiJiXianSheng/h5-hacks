@@ -126,9 +126,17 @@ function _postMessage (evt) {
 ```
 
 ***
-# <font color=green>[Usage]：</font> 禁止显示 `input` 历史输入
+
+# <font color=green>[Usage]：</font> 禁止 `input` 聚焦时调用第三方输入法（兼容性不高）
 ```html
 <input style="ime-mode:disabled" />
+```
+
+***
+
+# <font color=green>[Usage]：</font> 禁止显示 `input` 历史输入
+```html
+<input autocomplete="off" />
 ```
 
 ***
@@ -184,7 +192,7 @@ input {
 
 ***
 
-# <font color=green>[Usage]：</font> 安卓或谷歌浏览器 输入框右侧蓝色x按钮
+# <font color=green>[Usage]：</font> `input[type=search]` 时安卓或谷歌浏览器 输入框右侧蓝色x按钮
 ```css
 input::-webkit-search-cancel-button {
     display: none;
@@ -193,7 +201,7 @@ input::-webkit-search-cancel-button {
 
 ***
 
-# <font color=green>[Usage]：</font> 安卓荣耀10输入框输入文本跳转搜索页面，再次返回该页面时输入框自动聚焦
+# <font color=green>[Usage]：</font> `input` 输入文本跳转搜索页面后，再次返回该页面时输入框自动聚焦
 ```js
 // ...
 
@@ -327,3 +335,45 @@ $(window).resize(function () {
 });
 
 ```
+
+***
+
+# <font color=red>[Bug]：</font> h5 页面在 IOS 下返回，未重载  
+
+```js
+// 解决 h5 在IOS 下返回，页面不重载问题
+var browserRule = /^.*((iPhone)|(iPad)|(Safari))+.*$/;
+if (browserRule.test(navigator.userAgent)) {
+    window.onpageshow = function(event) {
+        console.log("onpageshow!")
+        if (event.persisted) {
+            window.location.reload();
+        }
+    };
+}
+
+```
+
+***
+
+# <font color=red>[Bug]：</font> h5 页面在 Android 下 `window.history.go(-1)` 无法返回上一页  
+
+```js
+
+var u = navigator.userAgent;
+var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+
+$("#cancel-btn").click(function () {
+
+    if (isIOS)
+        window.history.go(-1);
+    else
+        window.location.href = "lastPage.html";
+
+    // 或者 无论IOS或Android，都直接通过 location.href = "lastPage.html"; 跳转到指定页面
+});
+
+```
+
+***
+
