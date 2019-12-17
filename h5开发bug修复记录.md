@@ -377,3 +377,28 @@ $("#cancel-btn").click(function () {
 
 ***
 
+# <font color=red>[Bug]：</font> `<video>` 标签在 IOS 下点击无法播放
+
+- 解决方案一：
+
+```js
+
+// 用一张播放按钮的图片，监听其点击事件，触发时动态生成 video 标签插入，并调用 video.play();
+
+### 注：若在初始化加载html文档时，<video></video> 或 <source> 标签没有 src 属性及值，通过动态赋值（不会重新请求？）可能无法正常加载。
+
+$("#play-btn").click(function () {
+
+    var $video = $("<video src='"+ url +"' controls></video>");
+    
+    // 可监听其 播放事件
+    $video.on("play", function () {  });
+
+    $("#video-container").append($video);
+
+    $video.get(0).play();
+});
+
+```
+
+***
