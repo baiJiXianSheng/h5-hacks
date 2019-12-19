@@ -36,12 +36,17 @@ var VConsole = new VConsole();
     /* 需要知道容器（垂直滚动时）高度 或 （水平滚动时）宽度 */
     height: 800px;
     /* 必要 */
-    overflow: hidden; /* 如垂直滑动，当与 IOS 滑动冲突时，可改为 overflow-y: scroll */
+    overflow: hidden; /* 如垂直滑动，当与 IOS 滑动冲突时，可尝试 overflow-y: scroll */
 
     /* 可选，用于处理 IScroll 滚动区域不准确问题 */
     position: relative;
     /* 可选，解决谷歌浏览器下警告 */
     touch-action: none;
+}
+
+/* 当最后一条数据无法滑动到完整显示，可通过给滚动元素加 padding-bottom 解决 */
+#scroll-wrapper >div {
+    padding-bottom: 20px;
 }
 ```
 
@@ -50,8 +55,11 @@ var IScrollInstance = new IScroll("#scroll-wrapper", {
 
 });
 
+// request new data...
+$("#list").html(str);
 // 每次更新滑动列表内容后，记得手动刷新插件
 IScrollInstance && IScrollInstance.refresh();
+
 
 // iscroll-probe.js 才可监听到
 IScrollInstance.on("scroll", funciton () {
@@ -398,6 +406,46 @@ $("#play-btn").click(function () {
 
     $video.get(0).play();
 });
+
+```
+
+***
+
+# <font color=red>[Bug]：</font> `iframe` 在IOS下宽度变宽，产生左右滑动
+
+```html
+
+<div class="iframe-box">
+    <iframe src=".." frameborder="0" height="100%"></iframe>
+  </div>
+
+```
+
+```css
+
+.iframe-box {
+    overflow: auto; /* 或者 overflow-y: scroll */
+    -webkit-overflow-scrolling:touch; /* IOS 顺滑 */
+    width:100%;
+    height:100%;
+}
+
+/* 关键步骤 */
+.iframe-box iframe {
+    width: 1px; 
+    min-width: 100%; 
+    *width: 100%;
+}
+
+```
+
+```js
+
+var u = navigator.userAgent;
+var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+
+// 通过 js 设置 scrolling 属性
+$("iframe").attr("scrolling", isIOS ? "no" : "auto");
 
 ```
 
