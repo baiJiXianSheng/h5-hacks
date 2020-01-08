@@ -90,17 +90,23 @@ function _scrollEnd(e) {
 
 ***
 
+# <font color=green>[Usage]：</font> IScroll-pro 下拉刷新、上拉加载插件 
+
+插件源码及用例 地址：[[https://github.com/baiJiXianSheng/IScroll-pro]]
+
+***
+
 # <font color=green>[Usage]：</font> window.postMessage
 
 H5 API：`window.postMessage(message: any, targetOrigin: string)`;
 
 **当通过 iframe 嵌入页面时**
 
-- 父页面向子页面传递消息通知
+- 父页面向 iframe 嵌套的子页面传递消息通知：`iframe.contentWindow.postMessage()`
 ```ts
 
-// 如在父页面
-window.postMessage({ res: 1, evtType: "showNotice" }, "*");
+// 父页面
+document.querySelect("iframe").contentWindow.postMessage({ res: 1, evtType: "showNotice" }, "*");
 
 // 在子页面定义接收事件
 window.addEventListener("message", _postMessage);
@@ -114,7 +120,7 @@ function _postMessage (evt) {
 
 ```
 
-- 子页面（iframe包裹的页面）向父页面（ifram容器所在页面）传递消息
+- iframe 包裹的子页面 向父页面传递消息：`window.parent.postMessage()`
 ```ts
 
 // 子页面
@@ -243,6 +249,30 @@ beforeRequest();
     div {
         
     }
+}
+
+```
+
+***
+
+# <font color=green>[Usage]：</font> CSS 伪元素 `::before` `::after` 
+```css
+
+div::before {
+    /* 默认为 inline 元素 */
+    display: block; 
+    
+    /*
+    值得类型可选：'文本'、url(xxx.png)、attr(节点的某个属性)、counter()序列
+    **/
+    content: '\0252';
+    content: '内容';
+    content: url(assets/xxx.png);
+
+    /* <div data-index="1"></div> */
+    /* 可通过js修改 data-index 的值，使得 伪元素的内容自动改变 */
+    content: attr(data-index);
+    
 }
 
 ```
