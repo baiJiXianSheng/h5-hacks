@@ -1,5 +1,140 @@
 
 
+
+# <font color=green>[Usage]：</font> `FormData` XMLHttpRequest Level 2 新增的一个对象，利用它来提交表单、模拟表单提交，当然最大的优势就是可以上传二进制文件!
+
+```html
+
+<form action="" id="form">
+    <!-- multiple 属性可选择多文件 -->
+    <input type="file" name="" value="选择文件">
+    <input type="text" name="username" value="jack ma">
+</form>
+
+```
+
+```js
+
+var form = document.getElementById("form"),
+    formData = new FormData(form);
+
+/**
+ * formData.get(name: string)
+ * 
+ * 返回第一个属性为 name 的 值 || null
+*/
+
+/**
+ * formData.getAll(name: string)
+ * 
+ * 获取所有属性名为 name 的值，以 数组 || [] 形式返回
+*/
+
+/**
+ * （同步操作）
+ * formData.append(name: string, value: string|Blob, fileName: string) 
+ * 
+ * 可添加多个同名的值，不会覆盖，非唯一性 
+*/
+formData.append("username", "jackie");
+console.log("formData:", formData, "get:", formData.get("username"), "getAll:", formData.getAll("username"));
+
+/**
+ * （同步操作）
+ * formData.set(name: string, value: string|Blob, fileName: string)
+ * 
+ * 有该属性则修改，无则添加该属性及值
+ * 会将 name 属性的值全部改为 value，且 getAll 会返回 仅包含一个该value值 的数组
+*/
+formData.set("username", "setted-name");
+console.log("formData:", formData, "get:", formData.get("username"), "getAll:", formData.getAll("username"));
+
+
+/**
+ * has(name: string): Boolean
+*/
+console.log("has:", formData.has("username"), formData.has("has-attr"));
+
+/**
+ * delete(name: string)
+ * 
+ * 删除所有 name 属性 
+*/
+formData.delete("username")
+console.log("deleted-has:", formData.has("username"), formData.get("username"), formData.getAll("username"));
+
+// ************************************************************************************************************************
+
+### 多图上传
+
+// 通过 <input type="file" multiple >
+$.each($input[0].files, function (index, file) {
+    formData.append("file" + index, file);
+});
+
+$.ajax({
+    // ...
+
+    // 直接将 formData 对象传递给后台
+    data: formData, 
+})
+
+
+```
+
+***
+
+# <font color=green>[Usage]：</font> Base64、Blob、File 之间的相互转换
+
+```js
+
+// 1、file、blob 转换为 base64
+function fileOrBlobToBase64 (fileOrBlob, callback) {
+    var reader = new FileReader();
+    reader.readAsDataURL(fileOrBlob);
+    reader.onload = function(evt) {
+        console.log(reader.result, this.result, evt.target.result); //获取到base64格式图片
+        // callback(result);
+    };
+}
+
+// 2、base64 转换为 blob
+function base64ToBlob(base64Data) {
+    //console.log(base64Data);//data:image/png;base64,
+    var byteString;
+    if(base64Data.split(',')[0].indexOf('base64') >= 0)
+        byteString = atob(base64Data.split(',')[1]);//base64 解码
+    else{
+        byteString = unescape(base64Data.split(',')[1]);
+    }
+    var mimeString = base64Data.split(',')[0].split(':')[1].split(';')[0];//mime类型 -- image/png
+
+    // var arrayBuffer = new ArrayBuffer(byteString.length); //创建缓冲数组
+    // var ia = new Uint8Array(arrayBuffer);//创建视图
+    var ia = new Uint8Array(byteString.length);//创建视图
+    for(var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    var blob = new Blob([ia], {
+        type: mimeString
+    });
+    return blob;
+}
+
+// 3、base64 转换为 file
+function base64ToFile(base64, filename) {//将base64转换为文件
+  var arr = base64.split(','), mime = arr[0].match(/:(.*?);/)[1],
+      bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+  while(n--){
+      u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new File([u8arr], filename, {type:mime});
+} 
+
+```
+
+***
+
 # <font color=green>[Usage]：</font> 移动端调试控制台
 ```html
 <script src="//cdn.bootcss.com/vConsole/3.3.3/vconsole.min.js"></script>
