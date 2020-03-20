@@ -135,6 +135,11 @@ function base64ToFile(base64, filename) {//将base64转换为文件
 
 ***
 
+# <font color=green>[Usage]：</font> 富文本编辑器
+https://braft.margox.cn/demos/basic
+
+***
+
 # <font color=green>[Usage]：</font> 移动端调试控制台
 ```html
 <script src="//cdn.bootcss.com/vConsole/3.3.3/vconsole.min.js"></script>
